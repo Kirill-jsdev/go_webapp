@@ -5,14 +5,28 @@ import (
 	"net/http"
 )
 
-func main() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		n, err := fmt.Fprintf(w, "Hello, world!")
-		if err != nil {
-			fmt.Println(err)
-		}
-		fmt.Println(fmt.Sprintf("Number of bytes written: %d", n))
-	})
+const portNumber = ":8080"
 
-	http.ListenAndServe(":8080", nil)
+func Home(w http.ResponseWriter, r *http.Request) {
+	n, err := fmt.Fprintf(w, "Hello, world!")
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Printf("Number of bytes written: %d\n", n)
+}
+
+func About(w http.ResponseWriter, r *http.Request) {
+	n, err := fmt.Fprintf(w, "About!")
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Printf("Number of bytes written: %d\n", n)
+}
+
+func main() {
+	http.HandleFunc("/", Home)
+	http.HandleFunc("/about", About)
+
+	fmt.Printf("Starting app on port: %s\n", portNumber)
+	http.ListenAndServe(portNumber, nil)
 }
