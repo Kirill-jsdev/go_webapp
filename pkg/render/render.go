@@ -4,29 +4,32 @@ import (
 	"bytes"
 	"fmt"
 	"log"
+	"myapp/pkg/config"
 	"net/http"
 	"path/filepath"
 	"text/template"
 )
+var app *config.AppConfig
+func NewTemplates(a *config.AppConfig) {
+	app = a
+}
 
 func RenderTemplate(w http.ResponseWriter, tmpl string) {
 
-	//Create template cache
-	tc, err := createTemplateCache()
-	if err != nil {
-		log.Fatal(err)
-	}
+	//Get template cache from app config
+	tc := app.TemplateCache
+
 
 	//get template from cache
 	t, ok := tc[tmpl]
 	if !ok {
-		log.Fatal(err)
+		log.Fatal("Could not get template from template cache")
 	}
 
 	//not mandatory stuff
 	buff := new(bytes.Buffer)
 
-	err = t.Execute(buff, nil)
+	err := t.Execute(buff, nil)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -40,7 +43,7 @@ func RenderTemplate(w http.ResponseWriter, tmpl string) {
 	}
 }
 
-func createTemplateCache() (map[string]*template.Template, error) {
+func CreateTemplateCache() (map[string]*template.Template, error) {
 	// myCache := make(map[string]*template.Template)
 	myCache := map[string]*template.Template{}
 
